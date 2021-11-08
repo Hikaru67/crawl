@@ -43,19 +43,20 @@ async function like(id) {
     puppeteer.clearCustomQueryHandlers()
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
-    await page.goto(url)
+    await page.goto(url, {
+      waitUntil: 'networkidle2',
+    })
 
     const work = await page.evaluate(async (id) => {
       a = document.querySelectorAll(`#${id.id} section .cursor-pointer`)[0];
-      console.log('=>>> ~ a', a)
       if (a) {
         a.click()
         b = document.querySelectorAll(`#${id.id} section .cursor-pointer span`)[0]
         return b.innerText
       }
-      return false
+      return a
     }, { id })
-    console.log("work =>", work)
+    console.log(`work[${id}] =>`, work)
 
     await browser.close()
     await sleep(Math.floor(Math.random() * 1000))
