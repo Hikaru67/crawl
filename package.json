@@ -5,7 +5,7 @@
   "author": "HOI CHAO HANH",
   "license": "MIT",
   "scripts": {
-    "start": "nodeMON index.js"
+    "start": "nodemon index.js"
   },
   "dependencies": {
     "axios": "^0.24.0",

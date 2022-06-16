@@ -48,6 +48,7 @@ app.get('/increase-like', async (req, res) => {
     try {
       await like(wishId)
       await sleep(Math.floor(Math.random() * 500))
+      console.log("app.get => index", index)
     } catch (error) {
       continue
     }
@@ -99,7 +100,7 @@ async function comment(wishId) {
     const { data } = await axios.post('https://padlet.com/api/5/comments',
       {
         wish_id: wishId,
-        body: COMMENTS[Math.floor(Math.random() * 100 + 18)]
+        body: COMMENTS[Math.floor(Math.random() * 200 + 35)]
       },
       {
         headers: {
