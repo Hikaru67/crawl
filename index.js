@@ -167,4 +167,76 @@ async function comment(wishId) {
 //   }
 // }
 
+async function getPhone(url) {
+  try {
+    puppeteer.clearCustomQueryHandlers()
+    const browser = await puppeteer.launch({ headless: true })
+    const page = await browser.newPage()
+    page.setViewport({ width: 1280, height: 926 });
+    console.log('goto url')
+    try {
+      await page.goto(url, {
+        waitUntil: "networkidle2",
+        timeout: 5000
+      })
+    } catch (error) {
+      console.log('error :>> ', error);
+    }
+
+    try {
+      await page.waitForSelector('.ShowPhoneButton_phoneButton__p5Cvt.ShowPhoneButton_phoneNotClicked__dlQn_', {
+        visible: true,
+        timeout: 3000
+      })
+    } catch (error) {
+      
+    }
+    let btn = await page.$('.ShowPhoneButton_phoneButton__p5Cvt.ShowPhoneButton_phoneNotClicked__dlQn_')
+    if (btn) {
+      btn.click()
+    }
+    btn = await page.$('.ShowPhoneButton_phoneButton__p5Cvt.ShowPhoneButton_phoneNotClicked__dlQn_')
+    btn.click()
+
+
+    await page.evaluate(async () => {
+      a = await document.querySelectorAll(`.ShowPhoneButton_phoneButton__p5Cvt.ShowPhoneButton_phoneNotClicked__dlQn_`)[0];
+      if (a) {
+        await a.click()
+      }
+    })
+
+    await page.waitForSelector('.ShowPhoneButton_phoneButton__p5Cvt.ShowPhoneButton_phoneClicked__IxuR6 span')
+    let phone = await page.evaluate(async () => {
+      pn = await document.querySelectorAll(`.ShowPhoneButton_phoneButton__p5Cvt.ShowPhoneButton_phoneClicked__IxuR6 span`)[0];
+      
+      return pn?.textContent
+    })
+    
+    await sleep(1000)
+    
+    // phone = await page.$(`.ShowPhoneButton_phoneButton__p5Cvt.ShowPhoneButton_phoneClicked__IxuR6 span`)
+
+    // phone = await page.$('.ShowPhoneButton_phoneButton__p5Cvt.ShowPhoneButton_phoneClicked__IxuR6 span')
+    console.log('getPhone => phone:', phone)
+
+    await browser.close()
+
+    return phone
+  } catch (error) {
+    console.log("error", error)
+    return 'error'
+  }
+}
+
+app.get('/get-phone', async (req, res) => {
+  if (!req.query.url) {
+    res.status(422).json({ message: 'No query id or number' })
+  }
+  const url = req.query.url
+  const phone = await getPhone(url)
+
+  res.status(200).json(phone)
+})
+
 app.listen(PORT, () => console.log(`Server running on ${PORT}`))
