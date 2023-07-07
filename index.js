@@ -3,9 +3,14 @@ const app = express()
 const puppeteer = require('puppeteer')
 
 const PORT = process.env.PORT || 7200
+var phoneSet = {}
 
 async function getPhone(url) {
   try {
+    if (phoneSet[url]) {
+      return phoneSet[url];
+    }
+
     var btnCickClass = '.ShowPhoneButton_phoneButton__p5Cvt.ShowPhoneButton_phoneNotClicked__dlQn_'
     var phoneSpanClass = '.ShowPhoneButton_phoneButton__p5Cvt.ShowPhoneButton_phoneClicked__IxuR6 span'
     const browser = await puppeteer.launch({ headless: true })
@@ -38,6 +43,7 @@ async function getPhone(url) {
 
     await browser.close()
 
+    phoneSet[url] = phone
     return phone;
   } catch (error) {
     console.log("error", error)
