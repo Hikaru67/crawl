@@ -65,4 +65,8 @@ app.get('/get-phones', async (req, res) => {
   res.status(200).json(data)
 })
 
+app.get('/ping', async (req, res) => {
+  res.status(200).json('pong')
+})
+
 app.listen(PORT, () => console.log(`Server running on ${PORT}`))
